@@ -1,4 +1,7 @@
+version: '3.8'
+
 services:
+  # 1. 你的 MySQL 数据库
   db:
     image: mysql:8.0
     container_name: dmma-db
@@ -16,11 +19,34 @@ services:
       timeout: 5s
       retries: 10
 
+  # 2. 补回来的 达梦数据库 (Dameng)
+  dm8:
+    image: teamide/dm8:v201106
+    container_name: dm8
+    ports:
+      - "5236:5236"
+    environment:
+      SYSDBA_PWD: "Dameng@123"
+    volumes:
+      - dm8-data:/opt/dmdbms/data
+
+  # 3. Metabase (带驱动版)
   metabase:
-    image: metabase/metabase:latest
+    image: metabase/metabase:v0.46.0
     container_name: metabase
     ports:
       - "3000:3000"
+    volumes:
+      - ./plugins:/plugins
+      - ./metabase-data:/metabase-data
+    environment:
+      - MB_DB_FILE=/metabase-data/metabase.db
     depends_on:
       db:
         condition: service_healthy
+      # 确保达梦也启动
+      dm8:
+        condition: service_started
+
+volumes:
+  dm8-data:
