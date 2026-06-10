@@ -1,11 +1,9 @@
-version: '3.8'
-
 services:
   # 1. 你的 MySQL 数据库
   db:
     image: mysql:8.0
     container_name: dmma-db
-    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --skip-character-set-client-handshake
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: dmma
@@ -27,6 +25,7 @@ services:
       - "5236:5236"
     environment:
       SYSDBA_PWD: "Dameng@123"
+      CHARSET: 1
     volumes:
       - dm8-data:/opt/dmdbms/data
 
@@ -41,6 +40,9 @@ services:
       - ./metabase-data:/metabase-data
     environment:
       - MB_DB_FILE=/metabase-data/metabase.db
+      - JAVA_TOOL_OPTIONS=-Dfile.encoding=UTF-8
+      - LANG=C.UTF-8
+      - LC_ALL=C.UTF-8
     depends_on:
       db:
         condition: service_healthy
