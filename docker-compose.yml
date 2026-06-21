@@ -17,14 +17,14 @@ services:
       timeout: 5s
       retries: 10
 
-  # 2. 补回来的 达梦数据库 (Dameng)
+  # 2. 达梦数据库 (Dameng)
   dm8:
     image: teamide/dm8:v201106
     container_name: dm8
     ports:
       - "5236:5236"
     environment:
-      SYSDBA_PWD: "Dameng@123"
+      SYSDBA_PWD: "Dameng123"
       CHARSET: 1
     volumes:
       - dm8-data:/opt/dmdbms/data
